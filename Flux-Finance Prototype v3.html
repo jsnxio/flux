@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Flux — AI Market Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0B0B0D;--card:#131417;--card2:#17191E;--card3:#101114;
+  --border:rgba(255,255,255,.065);--border2:rgba(255,255,255,.11);
+  --text:#F5F5F7;--muted:#A1A1AA;--muted2:#6B6B75;
+  --green:#22C55E;--green-bg:rgba(34,197,94,.12);
+  --red:#EF4444;--red-bg:rgba(239,68,68,.12);
+  --blue:#3B82F6;--blue-bg:rgba(59,130,246,.10);
+  --gold:#F59E0B;--gold-bg:rgba(245,158,11,.12);
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5;overflow:hidden}
+button,input{font-family:'DM Sans',sans-serif}
+.app{height:100%;max-width:430px;margin:0 auto;position:relative;background:radial-gradient(circle at top,#101827 0%,#0B0B0D 32%,#0B0B0D 100%);overflow:hidden}
+.topbar{height:54px;display:flex;align-items:center;justify-content:space-between;padding:12px 18px 6px;position:absolute;top:0;left:0;right:0;z-index:50;background:linear-gradient(to bottom,rgba(11,11,13,.96),rgba(11,11,13,.72),transparent)}
+.logo{display:flex;align-items:center;gap:8px;font-size:20px;font-weight:600;letter-spacing:-.6px}
+.logo-mark{width:21px;height:21px;border-radius:7px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);position:relative;box-shadow:0 0 0 .5px rgba(255,255,255,.18) inset}
+.logo-mark:after{content:'';position:absolute;left:6px;top:5px;width:9px;height:11px;border-left:2px solid #fff;border-top:2px solid #fff;border-radius:1px;opacity:.95}
+.top-actions{display:flex;gap:8px;align-items:center}
+.icon-btn,.avatar{width:34px;height:34px;border-radius:50%;background:rgba(19,20,23,.86);border:.5px solid var(--border2);display:flex;align-items:center;justify-content:center;color:var(--muted);cursor:pointer;transition:.16s}
+.icon-btn:hover,.avatar:hover{background:var(--card2);color:var(--text)}
+.avatar{font-size:12px;font-weight:600;color:#fff;background:linear-gradient(135deg,#3B82F6,#8B5CF6)}
+.notif-dot{position:absolute;top:7px;right:7px;width:6px;height:6px;border-radius:50%;background:var(--blue);border:1.5px solid var(--bg)}
+.scroll{position:absolute;top:54px;bottom:78px;left:0;right:0;overflow-y:auto;padding:6px 0 28px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.scroll::-webkit-scrollbar{display:none}
+.page{display:none;min-height:100%;animation:fadeIn .18s ease}.page.active{display:block}
+@keyframes fadeIn{from{opacity:.6;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* core */
+.section{padding:0 16px;margin-bottom:6px}.section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 8px}.section-title{font-size:11px;color:var(--muted);letter-spacing:.065em;text-transform:uppercase;font-weight:500}.section-action{font-size:12px;color:var(--blue);cursor:pointer;font-weight:500}
+.card{background:rgba(19,20,23,.92);border:.5px solid var(--border);border-radius:16px;overflow:hidden}.card:hover{border-color:var(--border2)}
+.ask-card{margin:2px 16px 8px;padding:10px 12px;border-radius:14px;background:rgba(19,20,23,.9);border:.5px solid var(--border);cursor:pointer}
+.ask-row{display:flex;align-items:center;gap:9px;color:var(--muted);font-size:13px}.ask-k{font-family:'DM Mono';font-size:12px;color:var(--muted2);border:.5px solid var(--border);padding:2px 5px;border-radius:5px}
+.ask-suggestions{display:none;gap:6px;flex-wrap:wrap;padding-top:9px}.ask-card.expanded .ask-suggestions{display:flex}.pill{font-size:12px;color:var(--muted);background:transparent;border:.5px solid var(--border);padding:7px 10px;border-radius:999px;cursor:pointer}.pill:hover{color:var(--text);border-color:var(--border2)}
+.portfolio{margin:0 16px 8px}.portfolio-top{padding:16px 16px 0}.label{font-size:12px;color:var(--muted);margin-bottom:3px}.value{font-size:36px;font-weight:300;letter-spacing:-1.5px}.change-row{display:flex;gap:8px;align-items:center;margin-top:4px}.badge{display:inline-flex;gap:4px;align-items:center;padding:2px 7px;border-radius:999px;font-size:12px;font-weight:500}.up{color:var(--green)}.down{color:var(--red)}.badge.up{background:var(--green-bg)}.badge.down{background:var(--red-bg)}.sub{font-size:12px;color:var(--muted)}
+.chart-wrap{height:96px;margin:8px 0 0}.chart-svg{width:100%;height:100%}.tabs{display:flex;padding:0 14px 10px;border-top:.5px solid var(--border)}.tab{flex:1;text-align:center;padding:8px 2px;font-size:11px;color:var(--muted);cursor:pointer;position:relative}.tab.active{color:var(--text)}.tab.active:after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:15px;height:1.5px;background:var(--blue);border-radius:2px}
+.stats{display:grid;grid-template-columns:1fr 1fr;border-top:.5px solid var(--border)}.stat{padding:10px 14px}.stat:first-child{border-right:.5px solid var(--border)}.stat-l{font-size:11px;color:var(--muted2)}.stat-v{font-size:14px;margin-top:2px;font-weight:500}
+.brief{margin:4px 16px 8px;padding:13px 14px;cursor:pointer}.brief-label{display:flex;align-items:center;gap:6px;margin-bottom:8px}.ai-badge{display:inline-flex;gap:5px;align-items:center;background:var(--blue-bg);color:var(--blue);border:.5px solid rgba(59,130,246,.2);border-radius:999px;padding:3px 8px;font-size:11px;font-weight:500}.pulse{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}@keyframes pulse{50%{opacity:.45;transform:scale(1.25)}}.tap-hint{margin-left:auto;font-size:11px;color:var(--muted2)}.brief-text{font-size:14.5px;line-height:1.55;font-weight:300}.brief-footer{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.tag{font-size:11px;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.03);border:.5px solid var(--border2);color:var(--muted)}.tag.green{color:var(--green);background:var(--green-bg);border-color:rgba(34,197,94,.2)}.tag.red{color:var(--red);background:var(--red-bg);border-color:rgba(239,68,68,.2)}
+.asset-card{background:var(--card);border:.5px solid var(--border);border-radius:13px;padding:12px 13px;display:flex;align-items:center;gap:11px;margin-bottom:7px;cursor:pointer;transition:.15s}.asset-card:hover{background:var(--card2);border-color:var(--border2)}.asset-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;letter-spacing:-.3px;flex-shrink:0}.asset-info{flex:1;min-width:0}.asset-t{font-size:14px;font-weight:500}.asset-n,.asset-ai{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.asset-ai{font-size:11px;color:var(--muted2);margin-top:2px}.spark{width:50px;height:28px;flex-shrink:0}.asset-r{text-align:right;flex-shrink:0}.price{font-family:'DM Mono';font-size:14px;font-weight:500}.move{font-size:12px;margin-top:1px;font-weight:500}
+.hscroll{display:flex;gap:8px;overflow-x:auto;padding:0 16px;margin-bottom:10px;scrollbar-width:none}.hscroll::-webkit-scrollbar{display:none}.pulse-card{min-width:118px;background:var(--card);border:.5px solid var(--border);border-radius:11px;padding:10px 12px;cursor:pointer}.pulse-card:hover{background:var(--card2)}.pulse-name{font-size:11px;color:var(--muted);margin-bottom:2px}.pulse-val{font-family:'DM Mono';font-size:14px}.pulse-chg{font-size:11px;margin-top:1px;font-weight:500}
+.news-card{background:var(--card);border:.5px solid var(--border);border-radius:13px;padding:12px 13px;margin-bottom:7px;cursor:pointer}.news-card:hover{background:var(--card2);border-color:var(--border2)}.news-meta{display:flex;gap:6px;align-items:center;margin-bottom:6px}.news-source,.news-ticker{font-size:10px;color:var(--muted);background:rgba(255,255,255,.05);border:.5px solid var(--border);padding:2px 6px;border-radius:5px}.news-ticker{color:var(--blue);background:var(--blue-bg)}.news-time{font-size:10px;color:var(--muted2)}.news-head{font-size:13px;line-height:1.45}.news-ai{font-size:11px;color:var(--muted);line-height:1.45;border-left:2px solid var(--blue-bg);padding-left:8px;margin-top:7px}
+.disclaimer{font-size:10px;color:var(--muted2);text-align:center;padding:10px 22px;line-height:1.45}
+
+/* nav */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;z-index:100;background:rgba(11,11,13,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:.5px solid var(--border);display:flex;padding:9px 20px max(17px,env(safe-area-inset-bottom));height:78px}.nav{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted2);cursor:pointer;position:relative}.nav.active{color:var(--blue)}.nav-i{font-size:19px;line-height:1}.nav-l{font-size:10px;font-weight:500}.nav.active:after{content:'';width:4px;height:4px;border-radius:50%;background:var(--blue);position:absolute;bottom:0}
+
+/* pages */
+.back{padding:2px 16px 10px;color:var(--blue);font-size:13px;cursor:pointer}.title{font-size:28px;font-weight:300;letter-spacing:-1.1px;padding:0 16px 12px}.hero{margin:0 16px 10px;background:var(--card);border:.5px solid var(--border);border-radius:18px;padding:16px}.hero-top{display:flex;justify-content:space-between;gap:12px}.hero-title{font-size:24px;font-weight:400;letter-spacing:-.8px}.hero-sub{font-size:12px;color:var(--muted);margin-top:2px}.hero-price{font-size:32px;font-weight:300;letter-spacing:-1.2px;margin-top:13px}.follow{border:none;background:var(--blue);color:white;border-radius:999px;padding:8px 12px;font-size:12px;cursor:pointer;height:34px}.follow.following{background:rgba(255,255,255,.06);border:.5px solid var(--border2);color:var(--text)}
+.large-chart{height:168px;margin-top:12px}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 16px 12px}.metric{background:var(--card);border:.5px solid var(--border);border-radius:14px;padding:12px}.metric-l{font-size:11px;color:var(--muted2)}.metric-v{font-family:'DM Mono';font-size:14px;margin-top:4px}
+.connect{background:var(--card);border:.5px solid var(--border);border-radius:13px;padding:12px 13px;margin-bottom:7px;display:flex;align-items:center;gap:11px;cursor:pointer}.connect-icon{width:38px;height:38px;border-radius:11px;background:var(--card2);border:.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500}.connect-info{flex:1}.connect-name{font-size:14px;font-weight:500}.connect-status{font-size:11px;color:var(--muted);margin-top:1px}.status{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:4px}.live{background:var(--green);box-shadow:0 0 6px var(--green)}.sync{background:var(--gold)}
+.plan-grid{padding:0 16px 14px;display:flex;flex-direction:column;gap:10px}.plan{background:var(--card);border:.5px solid var(--border);border-radius:18px;padding:16px;cursor:pointer}.plan.featured{border-color:rgba(59,130,246,.42);background:linear-gradient(180deg,rgba(59,130,246,.08),var(--card))}.plan-tag{display:inline-flex;color:var(--blue);background:var(--blue-bg);border:.5px solid rgba(59,130,246,.18);border-radius:999px;padding:3px 8px;font-size:11px;margin-bottom:10px}.plan-name{font-size:16px;font-weight:500}.plan-price{font-size:30px;font-weight:300;margin:7px 0;letter-spacing:-1px}.plan-desc{font-size:13px;color:var(--muted);line-height:1.55}.plan-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}.plan-meta-card{background:rgba(255,255,255,.035);border:.5px solid var(--border);border-radius:12px;padding:10px}.plan-meta-l{font-size:10px;color:var(--muted2);text-transform:uppercase}.plan-meta-v{font-size:13px;font-weight:500;margin-top:3px}.plan-feat{font-size:13px;color:var(--muted);line-height:1.7}.callout{margin:0 16px 12px;padding:13px;background:linear-gradient(180deg,rgba(59,130,246,.08),rgba(255,255,255,.02));border:.5px solid rgba(59,130,246,.18);border-radius:16px}.callout-t{font-size:14px;font-weight:500}.callout-c{font-size:12px;color:var(--muted);line-height:1.55;margin-top:4px}
+.primary,.secondary{border:none;border-radius:12px;padding:10px 12px;font-size:13px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:rgba(255,255,255,.04);border:.5px solid var(--border2);color:var(--text)}.row-actions{display:flex;gap:8px;margin-top:12px}.row-actions>*{flex:1}
+
+/* overlays */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.58);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);z-index:500;display:none;align-items:flex-end;justify-content:center}.overlay.active{display:flex}.sheet{width:100%;max-width:430px;max-height:86vh;background:#101114;border:.5px solid var(--border2);border-radius:24px 24px 0 0;padding:14px 16px max(24px,env(safe-area-inset-bottom));overflow-y:auto;box-shadow:0 -20px 60px rgba(0,0,0,.45);animation:sheet .2s ease}@keyframes sheet{from{transform:translateY(20px);opacity:.6}to{transform:translateY(0);opacity:1}}.handle{width:38px;height:4px;border-radius:999px;background:rgba(255,255,255,.16);margin:0 auto 14px}.sheet-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;gap:12px}.sheet-title{font-size:22px;font-weight:400;letter-spacing:-.8px}.sheet-sub{font-size:12px;color:var(--muted);margin-top:2px}.close{width:32px;height:32px;border-radius:50%;border:.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);cursor:pointer;font-size:16px}.block{background:var(--card);border:.5px solid var(--border);border-radius:16px;padding:14px;margin-bottom:10px}.block-l{font-size:11px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}.block-c{font-size:14px;line-height:1.55;font-weight:300}.list{display:flex;flex-direction:column;gap:8px}.list-row{display:flex;gap:9px;font-size:13px;line-height:1.45}.list-row span:first-child{color:var(--blue);width:18px;flex-shrink:0}.chat-msgs{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}.msg{max-width:86%;padding:10px 12px;border-radius:16px;font-size:13px;line-height:1.45}.msg.user{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:5px}.msg.ai{align-self:flex-start;background:var(--card);border:.5px solid var(--border);border-bottom-left-radius:5px}.chat-input-row{display:flex;gap:8px;background:var(--card);border:.5px solid var(--border2);border-radius:16px;padding:8px}.chat-input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-size:14px}.send{border:none;background:var(--blue);color:white;border-radius:12px;padding:8px 12px;font-size:13px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.provider{background:var(--card);border:.5px solid var(--border);border-radius:14px;padding:13px;cursor:pointer}.provider:hover{background:var(--card2);border-color:var(--border2)}.provider-n{font-size:13px;font-weight:500}.provider-s{font-size:11px;color:var(--muted);margin-top:3px}.note{font-size:11px;color:var(--muted2);line-height:1.45;margin-top:12px}
+.profile-menu{position:fixed;top:58px;right:calc(50% - 203px);width:214px;background:#101114;border:.5px solid var(--border2);border-radius:16px;padding:8px;z-index:450;display:none;box-shadow:0 18px 60px rgba(0,0,0,.45)}.profile-menu.active{display:block}.profile-item{padding:11px 12px;border-radius:12px;font-size:13px;display:flex;justify-content:space-between;cursor:pointer}.profile-item:hover{background:rgba(255,255,255,.04)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%) translateY(12px);width:calc(100% - 32px);max-width:398px;background:#101114;border:.5px solid var(--border2);border-radius:14px;padding:12px 14px;z-index:20000;font-size:13px;color:var(--text);opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:430px){.profile-menu{right:16px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="logo" onclick="showPage('home')"><div class="logo-mark"></div>Flux</div>
+    <div class="top-actions">
+      <div class="icon-btn" onclick="openNotifications()" style="position:relative">•<div class="notif-dot"></div></div>
+      <div class="avatar" onclick="toggleProfile()">JD</div>
+    </div>
+  </div>
+
+  <div class="profile-menu" id="profileMenu">
+    <div class="profile-item" onclick="showPage('profile')"><span>Profile</span><span>›</span></div>
+    <div class="profile-item" onclick="showPage('subscription')"><span>Manage Subscription</span><span>›</span></div>
+    <div class="profile-item" onclick="showPage('accounts')"><span>Connected Accounts</span><span>›</span></div>
+    <div class="profile-item" onclick="showPage('settings')"><span>Settings</span><span>›</span></div>
+  </div>
+
+  <main class="scroll" id="scroll">
+    <!-- HOME -->
+    <section class="page active" id="page-home">
+      <div class="ask-card" id="askCard" onclick="expandAsk()">
+        <div class="ask-row"><span class="ask-k">⌘K</span><span>Ask Flux anything…</span></div>
+        <div class="ask-suggestions">
+          <button class="pill" onclick="askQuick(event,'What moved my portfolio today?')">What moved my portfolio?</button>
+          <button class="pill" onclick="askQuick(event,'What is my biggest risk?')">Biggest risk?</button>
+          <button class="pill" onclick="askQuick(event,'Explain today simply')">Explain today simply</button>
+        </div>
+      </div>
+
+      <div class="card portfolio">
+        <div class="portfolio-top">
+          <div class="label">Portfolio Value</div>
+          <div class="value" id="portfolioValue">$84,219.42</div>
+          <div class="change-row"><div class="badge up" id="portfolioBadge">▲ $1,204.38</div><div class="sub">+1.45% today</div></div>
+        </div>
+        <div class="chart-wrap">
+          <svg class="chart-svg" viewBox="0 0 400 90" preserveAspectRatio="none">
+            <defs><linearGradient id="gradMain" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22C55E" stop-opacity=".3"/><stop offset="100%" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs>
+            <path id="portArea" d="M0,68 Q30,66 60,58 Q90,52 120,55 Q150,42 180,40 Q210,35 240,28 Q270,24 300,18 Q330,14 360,11 Q380,8 400,6 L400,90 L0,90 Z" fill="url(#gradMain)"/>
+            <path id="portLine" d="M0,68 Q30,66 60,58 Q90,52 120,55 Q150,42 180,40 Q210,35 240,28 Q270,24 300,18 Q330,14 360,11 Q380,8 400,6" fill="none" stroke="#22C55E" stroke-width="1.7"/>
+          </svg>
+        </div>
+        <div class="tabs">
+          <div class="tab active" onclick="setPortfolioRange(this)">1D</div><div class="tab" onclick="setPortfolioRange(this)">1W</div><div class="tab" onclick="setPortfolioRange(this)">1M</div><div class="tab" onclick="setPortfolioRange(this)">3M</div><div class="tab" onclick="setPortfolioRange(this)">1Y</div><div class="tab" onclick="setPortfolioRange(this)">ALL</div>
+        </div>
+        <div class="stats"><div class="stat"><div class="stat-l">All-time return</div><div class="stat-v up">+$22,104</div></div><div class="stat"><div class="stat-l">All-time %</div><div class="stat-v up">+35.6%</div></div></div>
+      </div>
+
+      <div class="card brief" onclick="openDetail('signals')">
+        <div class="brief-label"><div class="ai-badge"><div class="pulse"></div>Portfolio Signals</div><span class="tap-hint">Details ›</span></div>
+        <div class="brief-text">⚡ <strong>Tech-heavy.</strong><br>Portfolio still sensitive to higher rates.<br>AI exposure remains elevated.</div>
+        <div class="brief-footer"><span class="tag">AI Exposure</span><span class="tag red">Rate Sensitive</span><span class="tag green">Momentum</span></div>
+      </div>
+
+      <div class="card brief" onclick="openDetail('brief')">
+        <div class="brief-label"><div class="ai-badge"><div class="pulse"></div>Market Brief</div><span class="tap-hint">Details ›</span></div>
+        <div class="brief-text">📈 <strong>Markets mixed today.</strong><br>Rates are pressuring tech.<br>Energy and financials are leading.</div>
+        <div class="brief-footer"><span class="tag green">Energy +1.8%</span><span class="tag red">Tech −0.9%</span><span class="tag">Fed 2pm</span><span class="tag">Yields ↑</span></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div class="section-title">Holdings</div><div class="section-action" onclick="showPage('holdings')">See all</div></div>
+        <div id="holdingsList"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><div class="section-title">Watchlist</div><div class="section-action" onclick="openAddWatch()">Edit</div></div>
+        <div id="watchList"></div>
+      </div>
+
+      <div class="section"><div class="section-header"><div class="section-title">Market Pulse</div><span class="sub">Live mock</span></div></div>
+      <div class="hscroll" id="marketPulse"></div>
+
+      <div class="section">
+        <div class="section-header"><div class="section-title">Breaking News</div><div class="section-action" onclick="showPage('news')">View all</div></div>
+        <div id="newsList"></div>
+      </div>
+      <div class="disclaimer">Flux provides educational market intelligence only and does not provide investment advice.</div>
+    </section>
+
+    <section class="page" id="page-holdings">
+      <div class="back" onclick="showPage('home')">‹ Home</div><div class="title">Holdings</div><div class="section" id="holdingsFull"></div>
+    </section>
+
+    <section class="page" id="page-news">
+      <div class="back" onclick="showPage('home')">‹ Home</div><div class="title">Market News</div><div class="section" id="newsFull"></div>
+    </section>
+
+    <section class="page" id="page-trending">
+      <div class="title">Trending</div>
+      <div class="section">
+        <div class="section-header"><div class="section-title">AI Market Themes</div></div>
+        <div class="card brief" onclick="openTheme('AI Rally')"><div class="brief-label"><div class="ai-badge">AI Rally</div><span class="tap-hint">14 stocks ›</span></div><div class="brief-text">Semis and cloud names are outperforming as AI capex remains resilient.</div></div>
+        <div class="card brief" onclick="openTheme('Rate Selloff')"><div class="brief-label"><div class="ai-badge" style="color:var(--red);background:var(--red-bg)">Rate Selloff</div><span class="tap-hint">32 stocks ›</span></div><div class="brief-text">Long-duration assets remain pressured as yields move higher.</div></div>
+        <div class="card brief" onclick="openTheme('Energy Rotation')"><div class="brief-label"><div class="ai-badge" style="color:var(--gold);background:var(--gold-bg)">Energy Rotation</div><span class="tap-hint">8 stocks ›</span></div><div class="brief-text">Oil strength is supporting energy and pipeline names.</div></div>
+        <div class="section-header"><div class="section-title">Biggest Movers</div></div>
+        <div id="moversList"></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-accounts">
+      <div class="title">Accounts</div>
+      <div class="section">
+        <div class="section-header"><div class="section-title">Connected Accounts</div><div class="section-action" onclick="openConnect()">+ Add</div></div>
+        <div id="connectedAccounts"></div>
+        <div class="card brief" onclick="openConnect()">
+          <div class="brief-label"><div class="ai-badge">Read-only</div><span class="tap-hint">Connect ›</span></div>
+          <div class="brief-text">Connect Robinhood, Fidelity, Coinbase, Schwab, or Webull through Plaid/SnapTrade architecture.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page" id="page-settings">
+      <div class="title">Settings</div>
+      <div class="section">
+        <div class="connect" onclick="showPage('subscription')"><div class="connect-icon">Pro</div><div class="connect-info"><div class="connect-name">Manage Subscription</div><div class="connect-status" id="settingsPlan">Flux Basic · Upgrade or change plan</div></div><div class="section-action">Manage</div></div>
+        <div class="connect" onclick="openStyle()"><div class="connect-icon">AI</div><div class="connect-info"><div class="connect-name">AI Explanation Style</div><div class="connect-status" id="styleLabel">Professional</div></div><div class="section-action">Edit</div></div>
+        <div class="connect" onclick="openNotifications()"><div class="connect-icon">•</div><div class="connect-info"><div class="connect-name">Notifications</div><div class="connect-status">Portfolio alerts and market briefs</div></div><div class="section-action">Edit</div></div>
+        <div class="connect" onclick="resetDemo()"><div class="connect-icon">↻</div><div class="connect-info"><div class="connect-name">Reset Demo Data</div><div class="connect-status">Restore prototype defaults</div></div><div class="section-action">Reset</div></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-profile">
+      <div class="back" onclick="showPage('home')">‹ Home</div><div class="title">Profile</div>
+      <div class="hero"><div class="hero-top"><div><div class="hero-title">Jason Doe</div><div class="hero-sub">j.doe@gmail.com · <span id="profilePlan">Flux Basic</span></div></div><div class="avatar">JD</div></div></div>
+      <div class="section">
+        <div class="connect" onclick="showPage('subscription')"><div class="connect-icon">Pro</div><div class="connect-info"><div class="connect-name">Flux Pro</div><div class="connect-status">Advanced AI signals and alerts</div></div><div class="section-action">View</div></div>
+        <div class="connect" onclick="showPage('accounts')"><div class="connect-icon">□</div><div class="connect-info"><div class="connect-name">Connected Accounts</div><div class="connect-status">Manage brokerage connections</div></div><div class="section-action">Open</div></div>
+      </div>
+    </section>
+
+    <section class="page" id="page-subscription">
+      <div class="back" onclick="showPage('settings')">‹ Settings</div><div class="title">Flux Plans</div>
+      <div class="callout"><div class="callout-t">Better context. Calmer decisions.</div><div class="callout-c">Flux does not promise returns. It helps users understand markets faster, avoid information overload, and make more disciplined decisions with clearer insight.</div></div>
+      <div class="plan-grid">
+        <div class="plan" onclick="openPlan('basic')"><div class="plan-tag">Awareness</div><div class="plan-name">Basic</div><div class="plan-price">$0</div><div class="plan-desc">For casual investors who want simple market awareness.</div><div class="plan-meta"><div class="plan-meta-card"><div class="plan-meta-l">AI Credits</div><div class="plan-meta-v">100/mo</div></div><div class="plan-meta-card"><div class="plan-meta-l">Insight</div><div class="plan-meta-v">Basic</div></div></div><div class="plan-feat">Watchlist<br>Market brief<br>Basic AI summaries<br>Limited Ask Flux</div></div>
+        <div class="plan featured" onclick="openPlan('pro')"><div class="plan-tag">Most Popular · Confidence</div><div class="plan-name">Pro</div><div class="plan-price">$14.99/mo</div><div class="plan-desc">For active investors who want to understand what moved their portfolio and why.</div><div class="plan-meta"><div class="plan-meta-card"><div class="plan-meta-l">AI Credits</div><div class="plan-meta-v">5,000/mo</div></div><div class="plan-meta-card"><div class="plan-meta-l">Insight</div><div class="plan-meta-v">Advanced</div></div></div><div class="plan-feat">Connected accounts<br>Portfolio intelligence<br>AI alerts<br>Historical analogs<br>Macro risk signals</div></div>
+        <div class="plan" onclick="openPlan('advanced')"><div class="plan-tag">Edge</div><div class="plan-name">Advanced</div><div class="plan-price">$49/mo</div><div class="plan-desc">For serious investors who want expert-style insight and portfolio stress testing.</div><div class="plan-meta"><div class="plan-meta-card"><div class="plan-meta-l">AI Credits</div><div class="plan-meta-v">25,000/mo</div></div><div class="plan-meta-card"><div class="plan-meta-l">Insight</div><div class="plan-meta-v">Expert</div></div></div><div class="plan-feat">Everything in Pro<br>Expert AI reports<br>Earnings summaries<br>Stress testing<br>Exportable research</div></div>
+      </div>
+      <div class="disclaimer">Educational market intelligence only. No investment advice or performance guarantee.</div>
+    </section>
+
+    <section class="page" id="page-asset">
+      <div class="back" onclick="goBack()">‹ Back</div>
+      <div class="hero">
+        <div class="hero-top"><div><div class="hero-title" id="assetTicker">AAPL</div><div class="hero-sub" id="assetName">Apple Inc.</div></div><button class="follow" id="followBtn" onclick="toggleFollow(event)">Add</button></div>
+        <div class="hero-price" id="assetPrice">$213.84</div>
+        <div class="change-row"><div class="badge up" id="assetMove">▲ +1.24%</div><div class="sub">today</div></div>
+        <div class="large-chart">
+          <svg class="chart-svg" viewBox="0 0 400 160" preserveAspectRatio="none"><defs><linearGradient id="assetGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22C55E" stop-opacity=".25"/><stop offset="100%" stop-color="#22C55E" stop-opacity="0"/></linearGradient></defs><path id="assetArea" d="M0,130 Q60,120 100,110 Q150,78 200,88 Q260,58 320,38 Q360,26 400,18 L400,160 L0,160 Z" fill="url(#assetGrad)"/><path id="assetLine" d="M0,130 Q60,120 100,110 Q150,78 200,88 Q260,58 320,38 Q360,26 400,18" fill="none" stroke="#22C55E" stroke-width="1.8"/></svg>
+        </div>
+        <div class="tabs"><div class="tab active" onclick="setAssetRange(this)">1D</div><div class="tab" onclick="setAssetRange(this)">1W</div><div class="tab" onclick="setAssetRange(this)">1M</div><div class="tab" onclick="setAssetRange(this)">1Y</div><div class="tab" onclick="setAssetRange(this)">5Y</div></div>
+      </div>
+      <div class="metric-grid"><div class="metric"><div class="metric-l">Market Cap</div><div class="metric-v" id="assetMcap">$3.2T</div></div><div class="metric"><div class="metric-l">52W Range</div><div class="metric-v" id="assetRange">$164–237</div></div><div class="metric"><div class="metric-l">Volume</div><div class="metric-v" id="assetVol">42.1M</div></div><div class="metric"><div class="metric-l">AI Confidence</div><div class="metric-v" id="assetConf">82%</div></div></div>
+      <div class="card brief" onclick="openDetail('asset')"><div class="brief-label"><div class="ai-badge"><div class="pulse"></div>Why It Moved</div><span class="tap-hint">Details ›</span></div><div class="brief-text" id="assetWhy">Lower yields helping large-cap tech rebound.</div></div>
+      <div class="section"><div class="section-header"><div class="section-title">Related News</div></div><div id="assetNews"></div></div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <div class="nav active" id="nav-home" onclick="showPage('home')"><div class="nav-i">⌂</div><div class="nav-l">Home</div></div>
+    <div class="nav" id="nav-trending" onclick="showPage('trending')"><div class="nav-i">↗</div><div class="nav-l">Trending</div></div>
+    <div class="nav" id="nav-accounts" onclick="showPage('accounts')"><div class="nav-i">□</div><div class="nav-l">Accounts</div></div>
+    <div class="nav" id="nav-settings" onclick="showPage('settings')"><div class="nav-i">○</div><div class="nav-l">Settings</div></div>
+  </nav>
+</div>
+
+<!-- OVERLAYS -->
+<div class="overlay" id="chatOverlay" onclick="overlayBg(event,'chatOverlay')"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div><div class="sheet-title">Ask Flux</div><div class="sheet-sub">Mock AI · API-ready</div></div><button class="close" onclick="closeOverlay('chatOverlay')">×</button></div><div class="chat-msgs" id="chatMsgs"><div class="msg ai">Ask what moved your portfolio, your biggest risk, or what markets are reacting to today.</div></div><div class="chat-input-row"><input class="chat-input" id="chatInput" placeholder="Ask Flux anything…" onkeydown="if(event.key==='Enter')sendChat()" /><button class="send" onclick="sendChat()">Send</button></div><div class="note">Production: connect this to Claude/OpenAI + live prices + holdings + news.</div></div></div>
+
+<div class="overlay" id="detailOverlay" onclick="overlayBg(event,'detailOverlay')"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div><div class="sheet-title" id="detailTitle">Details</div><div class="sheet-sub" id="detailSub">AI analysis</div></div><button class="close" onclick="closeOverlay('detailOverlay')">×</button></div><div id="detailBody"></div></div></div>
+
+<div class="overlay" id="connectOverlay" onclick="overlayBg(event,'connectOverlay')"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div><div class="sheet-title">Connect Account</div><div class="sheet-sub">Read-only brokerage linking</div></div><button class="close" onclick="closeOverlay('connectOverlay')">×</button></div><div class="grid2" id="providers"></div><div class="note">Real app: use Plaid Investments or SnapTrade. Flux should never store passwords — only secure read-only tokens.</div></div></div>
+
+<div class="overlay" id="watchOverlay" onclick="overlayBg(event,'watchOverlay')"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div><div class="sheet-title">Add to Watchlist</div><div class="sheet-sub">Choose assets to follow</div></div><button class="close" onclick="closeOverlay('watchOverlay')">×</button></div><div id="addWatchList"></div></div></div>
+
+<div class="overlay" id="planOverlay" onclick="overlayBg(event,'planOverlay')"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div><div class="sheet-title" id="planTitle">Flux Pro</div><div class="sheet-sub" id="planSub">Plan details</div></div><button class="close" onclick="closeOverlay('planOverlay')">×</button></div><div class="block"><div class="block-l">Why this plan exists</div><div class="block-c" id="planWhy"></div></div><div class="block"><div class="block-l">What you unlock</div><div class="list" id="planUnlocks"></div></div><div class="block"><div class="block-l">Potential value</div><div class="block-c" id="planValue"></div><div class="note">Illustrative benefits only. Flux does not promise users will make more money, outperform markets, or avoid losses.</div></div><div class="row-actions"><button class="secondary" onclick="closeOverlay('planOverlay')">Close</button><button class="primary" id="planAction" onclick="choosePlan()">Choose Plan</button></div></div></div>
+
+<div class="overlay" id="styleOverlay" onclick="overlayBg(event,'styleOverlay')"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div><div class="sheet-title">AI Style</div><div class="sheet-sub">Choose how Flux explains markets</div></div><button class="close" onclick="closeOverlay('styleOverlay')">×</button></div><div class="list" id="styleOptions"></div></div></div>
+
+<div class="overlay" id="notifyOverlay" onclick="overlayBg(event,'notifyOverlay')"><div class="sheet"><div class="handle"></div><div class="sheet-head"><div><div class="sheet-title">Notifications</div><div class="sheet-sub">Smart market alerts</div></div><button class="close" onclick="closeOverlay('notifyOverlay')">×</button></div><div id="notifyList"></div></div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
+const defaultState={watchlist:['TSLA','BTC'],connected:['Robinhood','Fidelity'],plan:'Basic',style:'Professional',lastPage:'home'};
+let state=JSON.parse(localStorage.getItem('fluxState')||'null')||defaultState; let historyStack=['home']; let currentAsset='AAPL'; let pendingPlan='Basic';
+
+const assets={
+AAPL:{name:'Apple Inc.',price:213.84,move:1.24,mcap:'$3.2T',range:'$164–237',vol:'42.1M',color:'#60A5FA',bg:'rgba(0,100,250,.15)',why:'Services resilient. iPhone demand steady.',news:['Apple services growth offsets hardware pressure','Analysts highlight strong margins in services segment']},
+NVDA:{name:'NVIDIA Corp.',price:487.30,move:-0.87,mcap:'$2.4T',range:'$302–505',vol:'63.8M',color:'#4ADE80',bg:'rgba(34,197,94,.12)',why:'📉 Rates pressuring growth stocks.',news:['AI chip demand remains strong despite rate pressure','Semiconductor names pull back as yields climb']},
+MSFT:{name:'Microsoft Corp.',price:425.10,move:0.63,mcap:'$3.1T',range:'$309–468',vol:'28.2M',color:'#A78BFA',bg:'rgba(139,92,246,.12)',why:'☁️ Cloud strength helping offset macro pressure.',news:['Azure demand supports Microsoft shares','AI cloud spending remains resilient']},
+TSLA:{name:'Tesla, Inc.',price:178.45,move:-2.14,mcap:'$568B',range:'$139–299',vol:'91.4M',color:'#F87171',bg:'rgba(239,68,68,.12)',why:'🚗 Demand concerns still weighing on sentiment.',news:['Tesla delivery miss raises EV demand concerns','Price cuts pressure auto margins']},
+BTC:{name:'Bitcoin',price:97240,move:3.41,mcap:'$1.9T',range:'$51k–109k',vol:'$48B',color:'#FCD34D',bg:'rgba(245,158,11,.12)',why:'🟡 ETF inflows continue supporting price action.',news:['Bitcoin rises as ETF inflows continue','Crypto liquidity improves into US session']},
+JPM:{name:'JPMorgan Chase',price:224.70,move:0.92,mcap:'$642B',range:'$174–240',vol:'12.6M',color:'#93C5FD',bg:'rgba(59,130,246,.12)',why:'Banks supported by higher yields.',news:['Banks firm as yields rise','Large-cap financials outperform regional peers']},
+XOM:{name:'Exxon Mobil',price:114.20,move:3.84,mcap:'$503B',range:'$95–126',vol:'19.1M',color:'#4ADE80',bg:'rgba(34,197,94,.12)',why:'🛢 Oil supply concerns keeping energy strong.',news:['Energy names rally as oil gains','OPEC supply stance supports crude prices']},
+ROKU:{name:'Roku, Inc.',price:58.10,move:-5.20,mcap:'$8.4B',range:'$48–108',vol:'8.2M',color:'#F87171',bg:'rgba(239,68,68,.12)',why:'Rate sensitivity and guidance concerns.',news:['Roku falls after guidance concern','Growth names underperform amid rate move']},
+AMZN:{name:'Amazon.com',price:188.34,move:1.08,mcap:'$1.96T',range:'$124–201',vol:'36.7M',color:'#F59E0B',bg:'rgba(245,158,11,.12)',why:'AWS and consumer strength support shares.',news:['AWS growth supports Amazon sentiment','Retail margins improve into summer']},
+META:{name:'Meta Platforms',price:512.20,move:0.74,mcap:'$1.30T',range:'$274–531',vol:'16.4M',color:'#60A5FA',bg:'rgba(59,130,246,.12)',why:'Ad demand and AI efficiency support sentiment.',news:['Meta ad demand remains firm','AI capex debate continues']},
+GLD:{name:'Gold ETF',price:231.40,move:0.18,mcap:'Commodity',range:'$180–244',vol:'9.8M',color:'#FCD34D',bg:'rgba(245,158,11,.12)',why:'Gold steady as uncertainty remains.',news:['Gold holds near highs amid macro uncertainty']},
+SPY:{name:'S&P 500 ETF',price:584.70,move:0.34,mcap:'Index',range:'$470–590',vol:'72.2M',color:'#93C5FD',bg:'rgba(59,130,246,.12)',why:'Broad market mixed but resilient.',news:['S&P 500 holds gains despite yield move']},
+QQQ:{name:'Nasdaq 100 ETF',price:492.10,move:-0.62,mcap:'Index',range:'$380–510',vol:'44.7M',color:'#A78BFA',bg:'rgba(139,92,246,.12)',why:'Tech pressured by higher yields.',news:['Nasdaq slips as yields climb']},
+US10Y:{name:'10Y Treasury Yield',price:4.52,move:0.08,mcap:'Macro',range:'3.6–4.8%',vol:'Macro',color:'#F5F5F7',bg:'rgba(255,255,255,.08)',why:'Yields rising after stronger data.',news:['Treasury yields climb after jobs data']},
+WTI:{name:'Oil WTI',price:79.40,move:1.12,mcap:'Commodity',range:'$65–86',vol:'Commodity',color:'#F59E0B',bg:'rgba(245,158,11,.12)',why:'Supply concerns supporting crude.',news:['Oil rises on supply concerns']},
+VIX:{name:'Volatility Index',price:14.2,move:-5.3,mcap:'Index',range:'11–22',vol:'Index',color:'#F87171',bg:'rgba(239,68,68,.12)',why:'Volatility easing today.',news:['VIX falls as market breadth improves']}
+};
+const holdings=[{t:'AAPL',qty:40,cost:146},{t:'NVDA',qty:22,cost:310},{t:'MSFT',qty:28,cost:301},{t:'JPM',qty:30,cost:177}];
+const news=[
+{src:'Bloomberg',time:'14m ago',ticker:'NVDA',head:'Fed officials signal two cuts remain possible amid cooling inflation data',ai:'📊 Lower yields helping large-cap tech rebound.'},
+{src:'Reuters',time:'41m ago',ticker:'OIL',head:'Saudi Arabia signals OPEC+ output will remain constrained',ai:'🛢 Oil supply concerns keeping energy strong.'},
+{src:'WSJ',time:'1h ago',ticker:'TSLA',head:'Tesla delivery miss raises concerns about EV demand',ai:'⚠️ Delivery concerns continue pressuring TSLA.'},
+{src:'CNBC',time:'2h ago',ticker:'JPM',head:'Large banks outperform as yields move higher',ai:'🏦 Higher yields support net interest income expectations.'}
+];
+const plans={
+basic:{title:'Flux Basic',sub:'Free · Awareness',why:'Basic helps casual investors understand what happened without reading scattered headlines.',unlocks:['100 AI credits per month','Watchlist tracking','Basic market brief','Limited Ask Flux prompts','Simple news explanations'],value:'Best for saving a few minutes per day through quick market summaries.',action:'Use Basic'},
+pro:{title:'Flux Pro',sub:'$14.99/mo · Confidence',why:'Pro is built for active investors who want better context before reacting. It connects your portfolio to market drivers, news, macro trends, and AI explanations.',unlocks:['5,000 AI credits per month','Connected brokerage accounts','What moved my portfolio?','Real-time AI alerts','Macro and sector risk signals','Historical market analogs'],value:'Designed to save hours of market reading each month and help reduce costly emotional decisions. Even avoiding one poorly timed panic trade could be worth more than the subscription for many users.',action:'Start Pro'},
+advanced:{title:'Flux Advanced',sub:'$49/mo · Edge',why:'Advanced is for serious investors who want expert-style research, deeper portfolio analysis, and institutional-grade market synthesis.',unlocks:['25,000 AI credits per month','Expert-level AI reports','Portfolio stress testing','Earnings call summaries','Advanced macro exposure','Exportable research briefs'],value:'Designed to condense hours of research into minutes. For larger portfolios, better risk awareness and fewer blind spots can be materially valuable over time.',action:'Choose Advanced'}
+};
+
+function save(){localStorage.setItem('fluxState',JSON.stringify(state))}
+function money(n){return '$'+Number(n).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:2})}
+function priceText(a){return a.price>1000?'$'+Number(a.price).toLocaleString():money(a.price)}
+function moveText(m){return (m>=0?'+':'−')+Math.abs(m).toFixed(2)+'%'}
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2300)}
+function showPage(p, push=true){$$('.page').forEach(x=>x.classList.remove('active'));$('#page-'+p)?.classList.add('active');$$('.nav').forEach(n=>n.classList.remove('active'));$('#nav-'+p)?.classList.add('active');$('#scroll').scrollTop=0;toggleProfile(false);if(push && historyStack[historyStack.length-1]!==p)historyStack.push(p)}
+function goBack(){historyStack.pop();showPage(historyStack[historyStack.length-1]||'home',false)}
+function expandAsk(){$('#askCard').classList.toggle('expanded')}
+document.addEventListener('click',e=>{if(!$('#askCard')?.contains(e.target))$('#askCard')?.classList.remove('expanded')})
+
+function assetCard(t, extra=''){const a=assets[t]; const positive=a.move>=0; return `<div class="asset-card" onclick="openAsset('${t}')"><div class="asset-icon" style="background:${a.bg};color:${a.color}">${t}</div><div class="asset-info"><div class="asset-t">${t}</div><div class="asset-n">${a.name}</div><div class="asset-ai">${a.why}</div></div><svg class="spark" viewBox="0 0 52 28" fill="none"><polyline points="${positive?'2,22 10,18 18,16 26,12 34,10 42,8 50,6':'2,8 10,12 18,15 26,14 34,18 42,20 50,23'}" stroke="${positive?'#22C55E':'#EF4444'}" stroke-width="1.5" fill="none"/></svg><div class="asset-r"><div class="price">${priceText(a)}</div><div class="move ${positive?'up':'down'}">${moveText(a.move)}</div>${extra}</div></div>`}
+function render(){ 
+  $('#holdingsList').innerHTML=holdings.slice(0,3).map(h=>assetCard(h.t)).join('');
+  $('#holdingsFull').innerHTML=holdings.map(h=>assetCard(h.t,`<div class="asset-ai">${h.qty} sh</div>`)).join('');
+  $('#watchList').innerHTML=state.watchlist.map(t=>assetCard(t)).join('') || `<div class="card brief" onclick="openAddWatch()"><div class="brief-text">No watchlist yet. Tap to add assets.</div></div>`;
+  $('#marketPulse').innerHTML=['SPY','QQQ','US10Y','GLD','WTI','VIX'].map(t=>{const a=assets[t];return `<div class="pulse-card" onclick="openAsset('${t}')"><div class="pulse-name">${a.name.replace(' ETF','')}</div><div class="pulse-val">${t==='US10Y'?a.price+'%':priceText(a)}</div><div class="pulse-chg ${a.move>=0?'up':'down'}">${moveText(a.move)}</div></div>`}).join('');
+  $('#newsList').innerHTML=news.slice(0,3).map((n,i)=>newsCard(n,i)).join('');
+  $('#newsFull').innerHTML=news.map((n,i)=>newsCard(n,i)).join('');
+  $('#moversList').innerHTML=['XOM','BTC','ROKU','TSLA','NVDA'].map(t=>assetCard(t)).join('');
+  $('#connectedAccounts').innerHTML=state.connected.map(c=>`<div class="connect"><div class="connect-icon">${c[0]}</div><div class="connect-info"><div class="connect-name">${c}</div><div class="connect-status"><span class="status live"></span>Live · Synced 2m ago</div></div><div class="section-action" onclick="event.stopPropagation();disconnect('${c}')">Unlink</div></div>`).join('');
+  $('#settingsPlan').textContent=`Flux ${state.plan} · Upgrade or change plan`; $('#profilePlan').textContent=`Flux ${state.plan}`; $('#styleLabel').textContent=state.style;
+}
+function newsCard(n,i){return `<div class="news-card" onclick="openNews(${i})"><div class="news-meta"><span class="news-source">${n.src}</span><span class="news-time">${n.time}</span><span class="news-ticker">${n.ticker}</span></div><div class="news-head">${n.head}</div><div class="news-ai">${n.ai}</div></div>`}
+function openAsset(t){currentAsset=t;const a=assets[t];showPage('asset');$('#assetTicker').textContent=t;$('#assetName').textContent=a.name;$('#assetPrice').textContent=t==='US10Y'?a.price+'%':priceText(a);$('#assetMcap').textContent=a.mcap;$('#assetRange').textContent=a.range;$('#assetVol').textContent=a.vol;$('#assetWhy').textContent=a.why;const m=$('#assetMove');m.textContent=(a.move>=0?'▲ ':'▼ ')+moveText(a.move);m.className='badge '+(a.move>=0?'up':'down');const f=$('#followBtn');f.textContent=state.watchlist.includes(t)?'Following':'Add';f.className='follow '+(state.watchlist.includes(t)?'following':'');$('#assetNews').innerHTML=(a.news||[]).map((head,i)=>`<div class="news-card" onclick="openAssetNews('${t}',${i})"><div class="news-meta"><span class="news-source">Flux News</span><span class="news-time">Live</span><span class="news-ticker">${t}</span></div><div class="news-head">${head}</div><div class="news-ai">${a.why}</div></div>`).join('')}
+function toggleFollow(e){e.stopPropagation(); if(state.watchlist.includes(currentAsset)){state.watchlist=state.watchlist.filter(x=>x!==currentAsset);toast(currentAsset+' removed from watchlist')}else{state.watchlist.push(currentAsset);toast(currentAsset+' added to watchlist')}save();render();openAsset(currentAsset)}
+function setAssetRange(el){el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');const paths={'1D':'M0,130 Q60,120 100,110 Q150,78 200,88 Q260,58 320,38 Q360,26 400,18','1W':'M0,138 Q55,124 100,126 Q150,90 210,100 Q260,70 325,54 Q365,40 400,28','1M':'M0,132 Q50,118 92,106 Q145,76 195,85 Q255,54 302,45 Q350,32 400,20','1Y':'M0,146 Q60,134 115,120 Q185,96 240,76 Q300,54 350,34 Q380,24 400,18','5Y':'M0,150 Q70,140 135,124 Q190,106 245,82 Q308,56 355,34 Q382,22 400,14'};const d=paths[el.textContent.trim()];$('#assetLine').setAttribute('d',d);$('#assetArea').setAttribute('d',d+' L400,160 L0,160 Z')}
+function setPortfolioRange(el){el.parentElement.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');const paths={'1D':'M0,68 Q30,66 60,58 Q90,52 120,55 Q150,42 180,40 Q210,35 240,28 Q270,24 300,18 Q330,14 360,11 Q380,8 400,6','1W':'M0,78 Q50,70 100,64 Q150,55 200,44 Q250,35 300,24 Q350,14 400,9','1M':'M0,82 Q50,76 100,68 Q150,54 200,48 Q250,38 300,25 Q350,16 400,8','3M':'M0,80 Q80,72 120,64 Q160,54 200,41 Q280,24 320,15 Q360,9 400,6','1Y':'M0,86 Q90,74 150,64 Q210,51 260,36 Q310,24 360,12 Q385,8 400,5','ALL':'M0,88 Q80,80 140,70 Q200,58 250,43 Q300,28 350,14 Q380,7 400,4'};const d=paths[el.textContent.trim()];$('#portLine').setAttribute('d',d);$('#portArea').setAttribute('d',d+' L400,90 L0,90 Z')}
+
+function openOverlay(id){$('#'+id).classList.add('active')} function closeOverlay(id){$('#'+id).classList.remove('active')} function overlayBg(e,id){if(e.target.id===id)closeOverlay(id)}
+function askQuick(e,q){e.stopPropagation();openChat(q)}
+function openChat(q=''){openOverlay('chatOverlay');setTimeout(()=>{$('#chatInput').focus(); if(q){$('#chatInput').value=q;sendChat()}},80)}
+function sendChat(){const inp=$('#chatInput'),box=$('#chatMsgs');const text=inp.value.trim();if(!text)return;box.insertAdjacentHTML('beforeend',`<div class="msg user">${text}</div>`);let ans='Flux would analyze this using your live holdings, market data, news, macro data, and historical context.';const l=text.toLowerCase();if(l.includes('portfolio')) ans='Your portfolio is up today mainly from Apple, Microsoft, and JPM. NVIDIA is slightly offsetting gains as higher yields pressure growth stocks.';if(l.includes('risk')) ans='Your biggest current risk is rate sensitivity. The portfolio is tech-heavy, so rising yields can pressure valuations.';if(l.includes('today')||l.includes('market')) ans='Markets are mixed. Rates are higher, tech is weaker, and energy/financials are leading.';if(l.includes('buy')||l.includes('sell')) ans='I can explain risks and market context, but I cannot provide buy/sell recommendations. Flux is educational only.';setTimeout(()=>{box.insertAdjacentHTML('beforeend',`<div class="msg ai">${ans}</div>`);box.scrollTop=box.scrollHeight},220);inp.value=''}
+function openDetail(type){const data={signals:['Portfolio Signals','AI exposure analysis',`<div class="block"><div class="block-l">Summary</div><div class="block-c">Your portfolio is tech-heavy and remains sensitive to higher rates. AI-related exposure is elevated through NVDA, MSFT, and cloud-linked holdings.</div></div><div class="block"><div class="block-l">Main Drivers</div><div class="list"><div class="list-row"><span>01</span><div>AI and mega-cap technology drive most movement.</div></div><div class="list-row"><span>02</span><div>Rising yields can pressure higher-growth names.</div></div><div class="list-row"><span>03</span><div>Cloud and software strength offset some pressure.</div></div></div></div>`],brief:['Market Brief','Today’s macro read',`<div class="block"><div class="block-l">Summary</div><div class="block-c">Markets are mixed. Higher rates are pressuring technology, while energy and financials are holding up better.</div></div><div class="block"><div class="block-l">Why it matters</div><div class="block-c">Higher yields usually reduce the appeal of long-duration growth stocks. That is why tech can weaken even when company-specific news is quiet.</div></div>`],asset:['Why It Moved',currentAsset+' analysis',`<div class="block"><div class="block-l">Main Driver</div><div class="block-c">${assets[currentAsset].why}</div></div><div class="block"><div class="block-l">What To Watch</div><div class="list"><div class="list-row"><span>•</span><div>Volume relative to 30-day average</div></div><div class="list-row"><span>•</span><div>Macro sensitivity and sector rotation</div></div><div class="list-row"><span>•</span><div>Relevant headlines and earnings guidance</div></div></div></div>`]};const d=data[type];$('#detailTitle').textContent=d[0];$('#detailSub').textContent=d[1];$('#detailBody').innerHTML=d[2];openOverlay('detailOverlay')}
+function openNews(i){const n=news[i];$('#detailTitle').textContent='News Detail';$('#detailSub').textContent=n.src+' · '+n.time;$('#detailBody').innerHTML=`<div class="block"><div class="block-l">Headline</div><div class="block-c">${n.head}</div></div><div class="block"><div class="block-l">Why it matters</div><div class="block-c">${n.ai} Flux connects this headline to your holdings, sector exposure, and market conditions.</div></div>`;openOverlay('detailOverlay')}
+function openAssetNews(t,i){$('#detailTitle').textContent='Related News';$('#detailSub').textContent=t+' · live mock';$('#detailBody').innerHTML=`<div class="block"><div class="block-l">Headline</div><div class="block-c">${assets[t].news[i]}</div></div><div class="block"><div class="block-l">Flux Read</div><div class="block-c">${assets[t].why}</div></div>`;openOverlay('detailOverlay')}
+function openTheme(name){$('#detailTitle').textContent=name;$('#detailSub').textContent='AI market theme';$('#detailBody').innerHTML=`<div class="block"><div class="block-l">Theme</div><div class="block-c">${name} is driving cross-asset movement today. Flux would map this to your holdings, news, sector exposure, and macro data.</div></div>`;openOverlay('detailOverlay')}
+function openConnect(){const providers=['Robinhood','Fidelity','Coinbase','Schwab','E*TRADE','Webull','Interactive Brokers','Vanguard'];$('#providers').innerHTML=providers.map(p=>`<div class="provider" onclick="connect('${p}')"><div class="provider-n">${p}</div><div class="provider-s">Holdings + balances</div></div>`).join('');openOverlay('connectOverlay')}
+function connect(p){if(!state.connected.includes(p))state.connected.push(p);save();render();closeOverlay('connectOverlay');toast(p+' connected in prototype mode')}
+function disconnect(p){state.connected=state.connected.filter(x=>x!==p);save();render();toast(p+' unlinked')}
+function openAddWatch(){const candidates=Object.keys(assets).filter(t=>!['SPY','QQQ','US10Y','WTI','VIX'].includes(t));$('#addWatchList').innerHTML=candidates.map(t=>{const a=assets[t], added=state.watchlist.includes(t);return `<div class="connect"><div class="asset-icon" style="background:${a.bg};color:${a.color}">${t}</div><div class="connect-info"><div class="connect-name">${t}</div><div class="connect-status">${a.name}</div></div><button class="${added?'secondary':'primary'}" style="flex:0;padding:8px 11px" onclick="watchToggle('${t}')">${added?'Remove':'Add'}</button></div>`}).join('');openOverlay('watchOverlay')}
+function watchToggle(t){if(state.watchlist.includes(t)){state.watchlist=state.watchlist.filter(x=>x!==t);toast(t+' removed')}else{state.watchlist.push(t);toast(t+' added')}save();render();openAddWatch()}
+function openPlan(p){pendingPlan=p;const d=plans[p];$('#planTitle').textContent=d.title;$('#planSub').textContent=d.sub;$('#planWhy').textContent=d.why;$('#planValue').textContent=d.value;$('#planAction').textContent=d.action;$('#planUnlocks').innerHTML=d.unlocks.map((u,i)=>`<div class="list-row"><span>${String(i+1).padStart(2,'0')}</span><div>${u}</div></div>`).join('');openOverlay('planOverlay')}
+function choosePlan(){state.plan=plans[pendingPlan].title.replace('Flux ','');save();render();closeOverlay('planOverlay');toast('Plan changed to Flux '+state.plan)}
+function openStyle(){const styles=['Concise','Professional','Institutional','Beginner-friendly'];$('#styleOptions').innerHTML=styles.map(s=>`<div class="connect" onclick="setStyle('${s}')"><div class="connect-icon">AI</div><div class="connect-info"><div class="connect-name">${s}</div><div class="connect-status">${s===state.style?'Current style':'Tap to select'}</div></div><div class="section-action">${s===state.style?'✓':'Select'}</div></div>`).join('');openOverlay('styleOverlay')}
+function setStyle(s){state.style=s;save();render();closeOverlay('styleOverlay');toast('AI style set to '+s)}
+function openNotifications(){const alerts=['Portfolio moved over 1%','Major news hits a holding','Macro risk changes','Morning market brief','Evening portfolio recap'];$('#notifyList').innerHTML=alerts.map((a,i)=>`<div class="connect" onclick="toast('${a} toggled')"><div class="connect-icon">${i+1}</div><div class="connect-info"><div class="connect-name">${a}</div><div class="connect-status">Enabled</div></div><div class="section-action">On</div></div>`).join('');openOverlay('notifyOverlay')}
+function toggleProfile(force){const m=$('#profileMenu'); if(force===false)m.classList.remove('active'); else m.classList.toggle('active')}
+function resetDemo(){localStorage.removeItem('fluxState');state=defaultState;save();render();toast('Demo data reset')}
+document.addEventListener('click',e=>{if(!$('#profileMenu')?.contains(e.target)&&!e.target.classList.contains('avatar'))toggleProfile(false)})
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();openChat()} if(e.key==='Escape')$$('.overlay').forEach(o=>o.classList.remove('active'))})
+render();
+</script>
+</body>
+</html>
